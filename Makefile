@@ -12,7 +12,10 @@ help:
 #------------------------------------------------------------------------------------------------
 # Docker
 #------------------------------------------------------------------------------------------------
-docker-run: ## start stack docker
-	docker-compose up -d
-docker-stop: ## stop stack docker
-	docker-compose stop
+run: ## start stack docker
+	cd docker && docker-compose up -d
+stop: ## stop stack docker
+	cd docker && docker-compose stop
+
+composer:
+	cd docker && docker-compose run php-fpm composer
