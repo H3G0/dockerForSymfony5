@@ -1,6 +1,7 @@
 version: '3'
+
 services:
-  web:
+  nginx:
     build:
       context: ./nginx
     volumes:
@@ -18,20 +19,27 @@ services:
   php-fpm:
     build:
       context: ./php-fpm
-    environment: 
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@database:3306/${MYSQL_DATABASE}?serverVersion=5.7
       WAIT_FOR_HOSTS: database:3306
     env_file: .env
     depends_on:
       - database
-    environment:
-
     volumes:
       - ../src:/var/www
   
   database:
     build:
       context: ./database
-      env_file: .env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./database/data:/var/lib/mysql
